@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useData } from '@/context/DataContext';
 import Button from '@/components/ui/Button/Button';
-import { Plus, ArrowLeft, Power, Package, Edit2, ExternalLink, Settings, Save } from 'lucide-react';
+import { Plus, ArrowLeft, Power, Package, Edit2, ExternalLink, Settings, Save, Download } from 'lucide-react';
 import Link from 'next/link';
 import styles from './page.module.css';
 import { useToast } from '@/components/ui/Toast/ToastProvider';
@@ -48,6 +48,37 @@ export default function AdminClientDetail() {
             console.error(error);
         }
         setSaving(false);
+    };
+
+    const handleExportProducts = () => {
+        if (!products.length) return;
+
+        // CSV Header
+        const headers = ["Nome do Produto", "URL do Produto"];
+
+        // CSV Rows
+        const rows = products.map(product => {
+            const url = `${window.location.origin}/${client.slug}/${product.slug}`;
+            // Escape quotes and wrap in quotes to handle commas in names
+            const safeName = `"${product.name.replace(/"/g, '""')}"`;
+            return [safeName, url].join(',');
+        });
+
+        // Combine with BOM for Excel UTF-8 compatibility
+        const csvContent = "\uFEFF" + [headers.join(','), ...rows].join('\n');
+
+        // Create Blob and trigger download
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+
+        link.setAttribute('href', url);
+        link.setAttribute('download', `${client.slug}_produtos.csv`);
+        link.style.visibility = 'hidden';
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     useEffect(() => {
@@ -136,9 +167,14 @@ export default function AdminClientDetail() {
                 <section className={styles.section}>
                     <div className={styles.sectionHeader}>
                         <h2>Produtos ({products.length})</h2>
-                        <Button icon={Plus} onClick={() => router.push(`/admin/clients/${params.clientSlug}/products/new`)}>
-                            Novo Produto
-                        </Button>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <Button variant="secondary" icon={Download} onClick={handleExportProducts}>
+                                Exportar Excel
+                            </Button>
+                            <Button icon={Plus} onClick={() => router.push(`/admin/clients/${params.clientSlug}/products/new`)}>
+                                Novo Produto
+                            </Button>
+                        </div>
                     </div>
 
                     {products.length > 0 ? (
