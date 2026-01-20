@@ -210,6 +210,23 @@ export const DataProvider = ({ children }) => {
         setProducts(prev => prev.map(p => p.id === productId ? { ...p, isActive: !p.isActive } : p));
     };
 
+    const bulkImportClients = async (clientsData) => {
+        try {
+            const res = await api.post('/clients/bulk-import', clientsData);
+
+            // Refresh clients completely to show new data
+            const clientsRes = await api.get('/clients');
+            setClients(clientsRes.data);
+            const allProducts = clientsRes.data.flatMap(c => c.products || []).map(p => ({ ...p, isActive: true }));
+            setProducts(allProducts);
+
+            return res.data;
+        } catch (error) {
+            console.error("Error bulk importing clients:", error);
+            throw error;
+        }
+    };
+
     return (
         <DataContext.Provider value={{
             clients,
@@ -222,9 +239,10 @@ export const DataProvider = ({ children }) => {
             loadProducts,
             addProduct,
             importProducts,
+            bulkImportClients, // Feature: Bulk Client Creation
             searchGlobalProducts,
             getCategories,
-            getDashboardStats, // Added
+            getDashboardStats,
             updateProduct,
             toggleProductStatus,
             isLoaded
