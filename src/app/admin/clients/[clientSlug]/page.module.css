@@ -244,3 +244,67 @@
 .externalLink:hover {
     color: var(--primary);
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1.5rem;
+        align-items: stretch;
+    }
+
+    .headerActions {
+        width: 100%;
+    }
+
+    .headerActions button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .subtitle {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .sectionHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .sectionHeader>div {
+        /* Buttons container */
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .sectionHeader button {
+        width: 100%;
+    }
+
+    .productRow {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .productInfo {
+        width: 100%;
+    }
+
+    .productActions {
+        width: 100%;
+        justify-content: flex-end;
+        border-top: 1px solid #f1f5f9;
+        padding-top: 1rem;
+    }
+
+    .tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 5px;
+        /* Scrollbar space */
+    }
+}

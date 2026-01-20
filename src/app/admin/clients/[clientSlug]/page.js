@@ -7,6 +7,7 @@ import { Plus, ArrowLeft, Power, Package, Edit2, ExternalLink, Settings, Save, D
 import Link from 'next/link';
 import styles from './page.module.css';
 import { useToast } from '@/components/ui/Toast/ToastProvider';
+import ImageUploader from '@/components/ui/ImageUploader/ImageUploader';
 
 export default function AdminClientDetail() {
     const params = useParams();
