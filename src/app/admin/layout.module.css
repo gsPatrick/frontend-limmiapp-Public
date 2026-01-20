@@ -2,10 +2,40 @@
     display: flex;
     min-height: 100vh;
     background-color: #f8fafc;
+    flex-direction: column;
+    /* Mobile default */
 }
 
+/* Mobile Header */
+.mobileHeader {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+}
+
+.hamburger {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #1e293b;
+    padding: 0.5rem;
+    margin-right: 1rem;
+}
+
+.mobileLogo {
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--primary);
+}
+
+/* Sidebar */
 .sidebar {
-    width: 250px;
+    width: 260px;
     background: #ffffff;
     border-right: 1px solid #e2e8f0;
     padding: 2rem;
@@ -13,6 +43,16 @@
     flex-direction: column;
     position: fixed;
     height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 50;
+    transform: translateX(-100%);
+    /* Hidden by default on mobile */
+    transition: transform 0.3s ease-in-out;
+}
+
+.sidebarOpen {
+    transform: translateX(0);
 }
 
 .logo {
@@ -21,12 +61,25 @@
     color: var(--primary);
     margin-bottom: 3rem;
     letter-spacing: -0.05em;
+    display: none;
+    /* Hidden in sidebar on mobile as we have mobile header */
+}
+
+/* Overlay */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 45;
+    animation: fadeIn 0.2s ease-out;
 }
 
 .nav {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    margin-top: 1rem;
+    /* Adjust for mobile top space */
 }
 
 .navItem {
@@ -53,6 +106,54 @@
 
 .main {
     flex: 1;
-    margin-left: 250px;
-    padding: 2rem;
+    padding: 1.5rem;
+    width: 100%;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Desktop Styles */
+@media (min-width: 1024px) {
+    .container {
+        flex-direction: row;
+    }
+
+    .mobileHeader {
+        display: none;
+    }
+
+    .sidebar {
+        transform: none;
+        /* Always visible */
+        position: fixed;
+        border-right: 1px solid #e2e8f0;
+        box-shadow: none;
+    }
+
+    .logo {
+        display: block;
+    }
+
+    .nav {
+        margin-top: 0;
+    }
+
+    .main {
+        margin-left: 260px;
+        /* Match sidebar width */
+        padding: 2.5rem;
+        width: calc(100% - 260px);
+    }
+
+    .overlay {
+        display: none;
+    }
 }
