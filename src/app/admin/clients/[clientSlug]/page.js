@@ -7,7 +7,7 @@ import { Plus, ArrowLeft, Power, Package, Edit2, ExternalLink, Settings, Save, D
 import Link from 'next/link';
 import styles from './page.module.css';
 import { useToast } from '@/components/ui/Toast/ToastProvider';
-import ImageUploader from '@/components/ui/ImageUploader/ImageUploader';
+
 
 export default function AdminClientDetail() {
     const params = useParams();
@@ -162,21 +162,23 @@ Converta os dados abaixo seguindo estritamente essa estrutura:`;
         }
     }, [isLoaded, params, getClientBySlug]);
 
-    // Handle Settings Save (We need a new updateClient method in Context, but for now we might need to add it)
+    // Handle Settings Save
     const handleSaveSettings = async () => {
         setSaving(true);
-        // We need to implement updateClient in DataContext or call API directly
         try {
-            // Check if updateClient exists, if not, we might need to add it or do direct axios
-            // For now, assuming we will add updateClient to context or use axios here if context is missing it
-            // Let's use direct axios for speed if context doesn't have it, but context is cleaner.
-            // I'll check DataContext next tool call.
-            // Let's assume we add it. 
+            await updateClient(client.id, {
+                description,
+                coverImage: coverImages[0] || "" // Sending the first image as the cover
+            });
+            addToast("Configurações salvas com sucesso!", "success");
         } catch (error) {
             console.error(error);
+            addToast("Erro ao salvar configurações.", "error");
+        } finally {
+            setSaving(false);
         }
-        setSaving(false);
     };
+
 
     const handleExportProducts = () => {
         if (!products.length) return;
@@ -404,9 +406,20 @@ Converta os dados abaixo seguindo estritamente essa estrutura:`;
                     </div>
 
                     <div style={{ marginBottom: '1.5rem' }}>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600', color: '#1e293b' }}>Imagem de Capa (Background)</label>
-                        <ImageUploader images={coverImages} onChange={setCoverImages} />
-                        <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.5rem' }}>Recomendado: Uma boa imagem de Banner. A primeira imagem será usada.</p>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600', color: '#1e293b' }}>URL da Imagem de Capa (Banner)</label>
+                        <input
+                            type="text"
+                            value={coverImages[0] || ""}
+                            onChange={(e) => setCoverImages([e.target.value])}
+                            placeholder="https://..."
+                            style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', marginBottom: '0.5rem' }}
+                        />
+                        {coverImages[0] && (
+                            <div style={{ width: '100%', height: '200px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2e8f0', background: '#f8fafc' }}>
+                                <img src={coverImages[0]} alt="Preview da Capa" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => e.target.style.display = 'none'} />
+                            </div>
+                        )}
+                        <p style={{ fontSize: '0.85rem', color: '#64748b' }}>Cole o link direto da imagem que deseja usar como capa da loja.</p>
                     </div>
 
                     <Button onClick={handleSaveSettings} disabled={saving} icon={Save}>
