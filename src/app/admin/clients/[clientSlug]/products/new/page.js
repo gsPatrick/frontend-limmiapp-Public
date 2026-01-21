@@ -44,10 +44,19 @@ export default function NewProductPage() {
     // Categories State
     const [categoryOptions, setCategoryOptions] = useState([]);
 
+    const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const autoFocus = searchParams?.get('autoFocusSearch');
+
     useEffect(() => {
         // Load Categories
         getCategories().then(setCategoryOptions);
-    }, [getCategories]);
+
+        // Auto focus search if requested
+        if (autoFocus && typeof document !== 'undefined') {
+            const input = document.getElementById('global-search-input');
+            if (input) input.focus();
+        }
+    }, [getCategories, autoFocus]);
 
     const handleGlobalSearch = async (e) => {
         const val = e.target.value;
@@ -152,6 +161,7 @@ export default function NewProductPage() {
                 <div style={{ display: 'flex', alignItems: 'center', background: 'white', padding: '1rem', borderRadius: '12px', border: '2px dashed #cbd5e1' }}>
                     <Search size={20} color="#64748b" style={{ marginRight: '1rem' }} />
                     <input
+                        id="global-search-input"
                         type="text"
                         placeholder="🔍 Pesquisar no Catálogo Global para clonar (Digite 'Mel'...)"
                         value={globalQuery}

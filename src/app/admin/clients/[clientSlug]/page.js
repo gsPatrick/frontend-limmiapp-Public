@@ -26,6 +26,7 @@ export default function AdminClientDetail() {
 
     // Import Modal State
     const [importModalOpen, setImportModalOpen] = useState(false);
+    const [newProductOptionModalOpen, setNewProductOptionModalOpen] = useState(false); // New Option
     const [importStep, setImportStep] = useState(1); // 1: Prompt, 2: JSON
     const [importJson, setImportJson] = useState("");
     const [importing, setImporting] = useState(false);
@@ -233,11 +234,57 @@ Converta os dados abaixo seguindo estritamente essa estrutura:`;
                             <Button variant="secondary" icon={Upload} onClick={() => setImportModalOpen(true)}>
                                 Importar JSON
                             </Button>
-                            <Button icon={Plus} onClick={() => router.push(`/admin/clients/${params.clientSlug}/products/new`)}>
+                            <Button icon={Plus} onClick={() => setNewProductOptionModalOpen(true)}>
                                 Novo Produto
                             </Button>
                         </div>
                     </div>
+
+                    {/* New Product Choice Modal */}
+                    {newProductOptionModalOpen && (
+                        <div className={styles.modalOverlay} onClick={() => setNewProductOptionModalOpen(false)}>
+                            <div className={styles.modal} onClick={e => e.stopPropagation()} style={{ maxWidth: '500px', textAlign: 'center' }}>
+                                <h2>Adicionar Produto</h2>
+                                <p style={{ color: '#64748b', marginBottom: '2rem' }}>Como você deseja adicionar este produto à loja?</p>
+
+                                <div style={{ display: 'grid', gap: '1rem' }}>
+                                    <button
+                                        onClick={() => router.push(`/admin/clients/${params.clientSlug}/products/new`)}
+                                        style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', border: '1px solid #e2e8f0', borderRadius: '12px', background: 'white', cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s' }}
+                                        onMouseEnter={e => e.currentTarget.style.borderColor = '#2563eb'}
+                                        onMouseLeave={e => e.currentTarget.style.borderColor = '#e2e8f0'}
+                                    >
+                                        <div style={{ background: '#eff6ff', padding: '10px', borderRadius: '50%' }}>
+                                            <Edit2 size={24} color="#2563eb" />
+                                        </div>
+                                        <div>
+                                            <strong style={{ display: 'block', fontSize: '1rem', marginBottom: '4px' }}>Criar do Zero</strong>
+                                            <span style={{ color: '#64748b', fontSize: '0.9rem' }}>Preencher todas as informações manualmente.</span>
+                                        </div>
+                                    </button>
+
+                                    <button
+                                        onClick={() => router.push(`/admin/clients/${params.clientSlug}/products/new?autoFocusSearch=true`)}
+                                        style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', border: '1px solid #e2e8f0', borderRadius: '12px', background: 'white', cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s' }}
+                                        onMouseEnter={e => e.currentTarget.style.borderColor = '#2563eb'}
+                                        onMouseLeave={e => e.currentTarget.style.borderColor = '#e2e8f0'}
+                                    >
+                                        <div style={{ background: '#f5f3ff', padding: '10px', borderRadius: '50%' }}>
+                                            <Copy size={24} color="#7c3aed" />
+                                        </div>
+                                        <div>
+                                            <strong style={{ display: 'block', fontSize: '1rem', marginBottom: '4px' }}>Reaproveitar Existente</strong>
+                                            <span style={{ color: '#64748b', fontSize: '0.9rem' }}>Buscar na Base Global e clonar dados.</span>
+                                        </div>
+                                    </button>
+                                </div>
+
+                                <div style={{ marginTop: '2rem' }}>
+                                    <Button variant="ghost" onClick={() => setNewProductOptionModalOpen(false)}>Cancelar</Button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     {products.length > 0 ? (
                         <div className={styles.productList}>

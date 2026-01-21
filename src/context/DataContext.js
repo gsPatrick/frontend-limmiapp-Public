@@ -153,6 +153,7 @@ export const DataProvider = ({ children }) => {
 
     const importProducts = async (clientId, productsArray) => {
         try {
+            cachedCategories = []; // Reset category cache
             const res = await api.post(`/clients/${clientId}/products/bulk-import`, productsArray);
 
             // Refetch clients to update product list completely or append locally if simpler
@@ -212,6 +213,7 @@ export const DataProvider = ({ children }) => {
 
     const bulkImportClients = async (clientsData) => {
         try {
+            cachedCategories = []; // Reset category cache
             const res = await api.post('/clients/bulk-import', clientsData);
 
             // Refresh clients completely to show new data
