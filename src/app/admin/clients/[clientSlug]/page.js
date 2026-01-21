@@ -415,6 +415,81 @@ Converta os dados abaixo seguindo estritamente essa estrutura:`;
                 </div>
             )}
 
+            {/* Global Catalog Bulk Clone Modal */}
+            {globalCatalogOpen && (
+                <div className={styles.modalOverlay} onClick={() => setGlobalCatalogOpen(false)}>
+                    <div className={styles.modal} onClick={e => e.stopPropagation()} style={{ maxWidth: '800px', height: '80vh', display: 'flex', flexDirection: 'column' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                            <h2>Catálogo Global</h2>
+                            <Button variant="ghost" onClick={() => setGlobalCatalogOpen(false)}>Fechar</Button>
+                        </div>
+
+                        <div style={{ marginBottom: '1rem', display: 'flex', gap: '10px' }}>
+                            <input
+                                type="text"
+                                placeholder="Buscar produto global..."
+                                value={globalSearchQuery}
+                                onChange={(e) => setGlobalSearchQuery(e.target.value)}
+                                style={{ flex: 1, padding: '0.5rem', borderRadius: '8px', border: '1px solid #ddd' }}
+                            />
+                            {selectedGlobalProducts.length > 0 && (
+                                <div style={{ alignSelf: 'center', fontWeight: 'bold', color: '#2563eb' }}>
+                                    {selectedGlobalProducts.length} selecionados
+                                </div>
+                            )}
+                        </div>
+
+                        <div style={{ flex: 1, overflowY: 'auto', border: '1px solid #f1f5f9', borderRadius: '8px', padding: '0.5rem' }}>
+                            {loadingGlobal ? (
+                                <div style={{ padding: '2rem', textAlign: 'center' }}>Carregando...</div>
+                            ) : (
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
+                                    {globalProducts.map(p => {
+                                        const isSelected = selectedGlobalProducts.some(sel => sel.id === p.id);
+
+                                        return (
+                                            <div
+                                                key={p.id}
+                                                onClick={() => toggleGlobalProductSelection(p)}
+                                                style={{
+                                                    border: isSelected ? '2px solid #2563eb' : '1px solid #e2e8f0',
+                                                    borderRadius: '8px',
+                                                    padding: '10px',
+                                                    cursor: 'pointer',
+                                                    background: isSelected ? '#eff6ff' : 'white',
+                                                    transition: 'all 0.2s',
+                                                    position: 'relative'
+                                                }}
+                                            >
+                                                {isSelected && <div style={{ position: 'absolute', top: '5px', right: '5px', background: '#2563eb', color: 'white', borderRadius: '50%', padding: '2px' }}><Check size={12} /></div>}
+
+                                                <div style={{ height: '100px', background: '#f8fafc', marginBottom: '10px', borderRadius: '4px', overflow: 'hidden' }}>
+                                                    {p.image ? (
+                                                        <img src={p.image} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                    ) : (
+                                                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#cbd5e1' }}><Package size={32} /></div>
+                                                    )}
+                                                </div>
+                                                <div style={{ fontWeight: 'bold', fontSize: '0.9rem', marginBottom: '4px', height: '40px', overflow: 'hidden' }}>{p.name}</div>
+                                                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{p.category}</div>
+                                            </div>
+                                        );
+                                    })}
+                                    {globalProducts.length === 0 && <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>Nenhum produto encontrado.</div>}
+                                </div>
+                            )}
+                        </div>
+
+                        <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
+                            <Button variant="secondary" onClick={() => setGlobalCatalogOpen(false)}>Cancelar</Button>
+                            <Button onClick={handleBulkClone} disabled={selectedGlobalProducts.length === 0 || cloning}>
+                                {cloning ? "Clonando..." : `Importar ${selectedGlobalProducts.length} Produtos`}
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Modal */}
             {importModalOpen && (
                 <div className={styles.modalOverlay} onClick={() => setImportModalOpen(false)}>
