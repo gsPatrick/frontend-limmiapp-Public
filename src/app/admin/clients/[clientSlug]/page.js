@@ -32,6 +32,74 @@ export default function AdminClientDetail() {
     const [importing, setImporting] = useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
 
+    // Global Catalog & Bulk Clone State
+    const [globalCatalogOpen, setGlobalCatalogOpen] = useState(false);
+    const { searchGlobalProducts, importProducts } = useData(); // we reused importProducts
+    const [globalSearchQuery, setGlobalSearchQuery] = useState("");
+    const [globalProducts, setGlobalProducts] = useState([]);
+    const [selectedGlobalProducts, setSelectedGlobalProducts] = useState([]);
+    const [loadingGlobal, setLoadingGlobal] = useState(false);
+    const [cloning, setCloning] = useState(false);
+
+    // Debounce Search Effect
+    useEffect(() => {
+        if (!globalCatalogOpen) return;
+
+        const timer = setTimeout(async () => {
+            setLoadingGlobal(true);
+            try {
+                const results = await searchGlobalProducts(globalSearchQuery);
+                setGlobalProducts(results);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoadingGlobal(false);
+            }
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [globalCatalogOpen, globalSearchQuery, searchGlobalProducts]);
+
+    const toggleGlobalProductSelection = (product) => {
+        setSelectedGlobalProducts(prev => {
+            const exists = prev.find(p => p.id === product.id);
+            if (exists) return prev.filter(p => p.id !== product.id);
+            return [...prev, product];
+        });
+    };
+
+    const handleBulkClone = async () => {
+        if (selectedGlobalProducts.length === 0) return;
+        setCloning(true);
+        try {
+            // Transform selected global products into format expected by importProducts
+            // Note: Global products have { id, name, price, ... }. 
+            // importProducts expects simplified JSON but basically same fields.
+            // We just need to ensure fields match.
+            const toImport = selectedGlobalProducts.map(p => ({
+                name: p.name,
+                description: p.description,
+                price: p.price,
+                category: p.category,
+                image: p.image,
+                nutrition: p.nutrition,
+                benefits: p.benefits,
+                tags: p.tags,
+                helpsWith: p.helpsWith
+            }));
+
+            await importProducts(client.id, toImport);
+            addToast(`${toImport.length} produtos clonados com sucesso!`, "success");
+            setGlobalCatalogOpen(false);
+            setSelectedGlobalProducts([]);
+            // Products update automatically due to logic in DataContext importProducts
+        } catch (error) {
+            addToast("Erro ao clonar produtos.", "error");
+        } finally {
+            setCloning(false);
+        }
+    };
+
     const PROMPT_TEXT = `Atue como um Especialista em Dados. Tenho uma lista de produtos em texto/excel e preciso que você a converta para um JSON estrito, compatível com meu sistema.
 Regras Obrigatórias:
 A saída deve ser APENAS um Array de objetos JSON.
