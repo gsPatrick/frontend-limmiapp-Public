@@ -34,7 +34,7 @@ export default function AdminClientDetail() {
 
     // Global Catalog & Bulk Clone State
     const [globalCatalogOpen, setGlobalCatalogOpen] = useState(false);
-    const { searchGlobalProducts, importProducts } = useData(); // we reused importProducts
+    const { searchGlobalProducts } = useData(); // we reused importProducts
     const [globalSearchQuery, setGlobalSearchQuery] = useState("");
     const [globalProducts, setGlobalProducts] = useState([]);
     const [selectedGlobalProducts, setSelectedGlobalProducts] = useState([]);
@@ -332,7 +332,7 @@ Converta os dados abaixo seguindo estritamente essa estrutura:`;
                                     </button>
 
                                     <button
-                                        onClick={() => router.push(`/admin/clients/${params.clientSlug}/products/new?autoFocusSearch=true`)}
+                                        onClick={() => { setNewProductOptionModalOpen(false); setGlobalCatalogOpen(true); }}
                                         style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', border: '1px solid #e2e8f0', borderRadius: '12px', background: 'white', cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s' }}
                                         onMouseEnter={e => e.currentTarget.style.borderColor = '#2563eb'}
                                         onMouseLeave={e => e.currentTarget.style.borderColor = '#e2e8f0'}
@@ -341,8 +341,8 @@ Converta os dados abaixo seguindo estritamente essa estrutura:`;
                                             <Copy size={24} color="#7c3aed" />
                                         </div>
                                         <div>
-                                            <strong style={{ display: 'block', fontSize: '1rem', marginBottom: '4px' }}>Reaproveitar Existente</strong>
-                                            <span style={{ color: '#64748b', fontSize: '0.9rem' }}>Buscar na Base Global e clonar dados.</span>
+                                            <strong style={{ display: 'block', fontSize: '1rem', marginBottom: '4px' }}>Selecionar da Base Global</strong>
+                                            <span style={{ color: '#64748b', fontSize: '0.9rem' }}>Buscar e clonar de uma lista existente.</span>
                                         </div>
                                     </button>
                                 </div>
