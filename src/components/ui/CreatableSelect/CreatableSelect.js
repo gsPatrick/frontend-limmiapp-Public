@@ -72,7 +72,7 @@ export default function CreatableSelect({ value, onChange, options = [], placeho
                 <ChevronDown size={16} color="#94a3b8" />
             </div>
 
-            {isOpen && searchTerm && (
+            {isOpen && (
                 <div style={{
                     position: 'absolute',
                     top: '100%',
